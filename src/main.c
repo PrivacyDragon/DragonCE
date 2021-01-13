@@ -150,7 +150,6 @@ uint24_t OPENVAR(){
         }
     printf("%d",score);
     delay(500);
-    level = score/100;
     ti_CloseAll();
     return score;
 }
