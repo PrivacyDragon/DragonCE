@@ -7,7 +7,7 @@
 #include <debug.h>
 #include "gfx/DRAAK.h"
 #include "gfx/DRAGAN.h"
-//Yes, this code looks really bad. but I'm not ready yet
+#define APPVAR "DRGNLVL"
 uint24_t about(uint24_t score){
     score++;
     gfx_BlitScreen(); //move the screen to the buffer.
@@ -124,35 +124,43 @@ uint24_t program_run(uint24_t score){
     } while (kb_Data[6] != kb_Clear);
     return score;
 }
+uint24_t OPENVAR(){
+    uint24_t score;
+    uint24_t level;
+    ti_var_t var;
+    ti_var_t slot;
+    score = 100;
+    ti_CloseAll();
+    if (!ti_Open(APPVAR, "r")){
+        ti_CloseAll();
+         slot = ti_Open(APPVAR, "w");
+        ti_Write(&score, sizeof(score), 1, slot);
+        ti_CloseAll();
+    }
+     var = ti_Open(APPVAR, "r");
+    score = ti_Read(&score, sizeof(score), 1, var);
+    dbg_sprintf(dbgout, score);
+    ti_CloseAll();
+    if (score < 100){ //if for some reason the score is below 100, which shouldn't happen, reset it to 100
+        printf("%d\n",score);
+        delay(500);
+        score = 100;
+        var = ti_Open(APPVAR, "w");
+        ti_Write(&score, sizeof(score), 1, var);
+        }
+    printf("%d",score);
+    delay(500);
+    level = score/100;
+    ti_CloseAll();
+    return score;
+}
 int main(void)
 {
     /*Open an appvar where the score is stored.
      * If it isn't available, create it and set it to 100.
      */
-    uint24_t score;
-    uint24_t level;
-    score = 100;
-    ti_CloseAll();
-    if (!ti_Open("DRGNLVL", "r")){
-        ti_CloseAll();
-        ti_var_t slot = ti_Open("DRGNLVL", "w");
-        ti_Write(&score, sizeof score, 1, slot);
-        ti_CloseAll();
-    }
-    ti_var_t var = ti_Open("DRGNLVL", "r");
-    score = ti_Read(&score, sizeof score, 1, var);
-    dbg_sprintf(dbgout, score);
-    ti_CloseAll();
-    if (score < 100){ //if for some reason the score is below 100, which shouldn't happen, reset it to 100
-        printf("%d",score);
-        delay(500);
-        score = 100;
-        var = ti_Open("DRGLVL", "w");
-        ti_Write(&score, sizeof score, 1, var);
-        }
-    printf("%d",score);
-    delay(500);
-    level = score/100;
+    uint24_t score = OPENVAR();
+    uint24_t level = score/100;
     ti_CloseAll();
     if (level > 20){ //If the level is higher than 10, display the big dragon
         DRAGAN_init();
@@ -165,8 +173,8 @@ int main(void)
     lines(level); //draw the 'menu' bar
     score = program_run(score);
     //update the score variable with the new score
-    var = ti_Open("DRGNLVL", "w");
-    ti_Write(&score, sizeof score, 1, var);
+    ti_var_t var = ti_Open(APPVAR, "w");
+    ti_Write(&score, sizeof(score), 1, var);
     ti_CloseAll();
     printf("%d",score);
     delay(500);
