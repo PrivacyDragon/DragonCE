@@ -57,6 +57,8 @@ uint24_t about2(uint24_t score){
     return score;
 }
 void feed(){
+    //this function should display the goat.
+    //and bring it to the dragon...
 }
 void care(){
 }
@@ -131,7 +133,7 @@ uint24_t program_run(uint24_t score){
     do {
         kb_Scan();
         if (kb_Data[1] == kb_Yequ){
-            feed();
+            feed(); //in this funtion the goat should be displayed.
         }
         if (kb_Data[1] == kb_Window){
             care();
