@@ -34,7 +34,7 @@ void about(){
     gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
     gfx_PrintStringXY("For drawing the dragons",10,181);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.1",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.2",200,230);
     gfx_PrintStringXY(">",5,230);
     do{ //wait untill clear is pressed
         kb_Scan();
@@ -56,7 +56,7 @@ void about2(){
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.1",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.2",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
         kb_Scan();
