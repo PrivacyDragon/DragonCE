@@ -1,25 +1,19 @@
-palettes:
-  - name: global_palette
-    images: automatic
 
 converts:
-  - name: tileset
-    palette: global_palette
-    compress: zx7
-    tilesets:
-      tile-width: 80
-      tile-height: 80
-      images:
-        - /home/bas_van_h/CEdev/projects/Draak/src/gfx/image.png
+  - name: images
+    palette: xlibc
+    transparent-color-index: 0
+    images:
+      - dragon.png
+      - goat.png
+      - dragan.png
+
 
 outputs:
-  - type: appvar
-    name: DRAGAN
-    source-format: c
-    include-file: DRAGAN.h
-    header-string: STRING
-    palettes:
-      - global_palette
+  - type: c
+    include-file: gfx.h
     converts:
-      - tileset
+      - images
+
+
 
