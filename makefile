@@ -5,7 +5,7 @@
 NAME ?= DRAGON
 ICON ?= icon.png
 DESCRIPTION ?= ""
-COMPRESSED ?= NO
+COMPRESSED ?= YES
 ARCHIVED ?= NO
 
 CFLAGS ?= -Wall -Wextra -Oz
