@@ -87,6 +87,22 @@ void feed(){
 void care(){
 }
 void train(){
+       int x, y;
+    score++;
+    gfx_BlitScreen();
+    gfx_SetDrawScreen();
+    gfx_FillScreen(224);
+    for (y = 40; y < 10; y--){
+        gfx_Sprite_NoClip(dragon, 40, y);
+        delay(80);
+    }
+    for (x = 40; x < 70; x++){
+        gfx_Sprite_NoClip(dragon, x, 5);
+        delay(80);
+    }
+    delay(500);
+    gfx_SwapDraw();
+    gfx_BlitBuffer();
 }
 
 void lines() {
