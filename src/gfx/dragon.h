@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 
-#define dragon_width 256
-#define dragon_height 192
-#define dragon_size 49154
+#define dragon_width 111
+#define dragon_height 146
+#define dragon_size 16208
 #define dragon ((gfx_sprite_t*)dragon_data)
-extern unsigned char dragon_data[49154];
+extern unsigned char dragon_data[16208];
 
 #ifdef __cplusplus
 }
