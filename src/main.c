@@ -16,7 +16,6 @@ void setup(){
     gfx_SetTransparentColor(148);
     gfx_FillScreen(224);
 }
-
 void about(){
     void about2();
     score++;
@@ -47,7 +46,6 @@ void about(){
     } while (kb_IsDown(kb_KeyClear));
     gfx_BlitBuffer(); //get the screen back from the buffer, move the about screen in the buffer (though it isn't needed anymore)
 }
-
 void about2(){
     gfx_FillScreen(224);
     gfx_PrintStringXY("DRAGONCE, a virtual dragon on your calculator!",1,1);
@@ -70,47 +68,58 @@ void feed(){
     score++;
     gfx_BlitScreen();
     gfx_SetDrawScreen();
-    for (x = 10; x < 60; x++){
+    for (x = 10; x < 50; x++){
         gfx_Sprite(goat, x,50);
         delay(100);
     }
-    for (y = 50; y < 75; y++){
-        gfx_Sprite(goat, 60, y);
+    for (y = 50; y < 70; y++){
+        gfx_Sprite(goat, 50, y);
         delay(100);
     }
-    gfx_TransparentSprite(goat, 60, 75);
+    gfx_TransparentSprite(goat, 50, 70);
     gfx_SwapDraw();
     delay(300);
     gfx_BlitBuffer();
 }
-
 void care(){
 }
 void train(){
-       int x, y;
+    int i, y;
     score++;
     gfx_BlitScreen();
     gfx_SetDrawScreen();
     gfx_FillScreen(224);
-    for (y = 40; y < 10; y--){
-        gfx_Sprite_NoClip(dragon, 40, y);
+    /*for (y = 40; y != 10; y--){
+        gfx_TransparentSprite(dragon, 40, y);
         delay(80);
     }
-    for (x = 40; x < 70; x++){
-        gfx_Sprite_NoClip(dragon, x, 5);
+    for (x = 40; x < 80; x++){
+        gfx_TransparentSprite(dragon, x, 10);
         delay(80);
+    }*/
+    gfx_SetTextScale(2, 2);
+    gfx_PrintStringXY("TRAINING...", 150,220);
+    gfx_SetTextScale(1, 1);
+    for (i = 0; i < 5; i++){
+        for (y = 10; y < 40; y++){
+            gfx_Sprite(dragon, 100, y);
+            delay(60);
+        }
+        for (y = 40; y != 10; y--){
+            gfx_Sprite(dragon, 100, y);
+            delay(60);
+        }
     }
     delay(500);
     gfx_SwapDraw();
     gfx_BlitBuffer();
 }
-
 void lines() {
     int a;
     gfx_SetColor(255);
-    gfx_HorizLine_NoClip(0, 210, 320);
+    gfx_HorizLine(0, 210, 320);
     for (a = 0; a < 320; a+=64){
-        gfx_VertLine_NoClip(a, 210, 240);
+        gfx_VertLine(a, 210, 240);
     }
     gfx_FillRectangle(128,210,64,30);
     gfx_SetTextXY(5,5);
@@ -122,17 +131,22 @@ void lines() {
     gfx_PrintStringXY("TRAIN",205,223);
     gfx_BlitBuffer();
 }
-
 void drawgan() {
     gfx_TransparentSprite(dragan, 40, 40);
     gfx_BlitBuffer();
 }
-
 void draak() {
-    gfx_TransparentSprite(dragon, 40, 40);
+    gfx_TransparentSprite(dragon, 100, 40);
     gfx_BlitBuffer();
 }
-
+void draw_Dragon(){
+        if (level > 20){ //If the level is higher than 10, display the big dragon
+        drawgan();
+    }
+    else { //if the level is lower than 10, display the small dragon
+        draak();
+    }
+}
 void program_run(){
     do {
         kb_Scan();
@@ -151,7 +165,6 @@ void program_run(){
         }
     } while (kb_Data[6] != kb_Clear);
 }
-
 void OPENVAR(){
     ti_var_t var;
     ti_var_t slot;
@@ -176,27 +189,21 @@ void OPENVAR(){
     delay(500);
     ti_CloseAll();
 }
-
 void UPDATEVAR(){
     ti_var_t var = ti_Open(APPVAR, "w");
     ti_Write(&score, sizeof(score), 1, var);
     ti_CloseAll();
 }
-
 int main(void)
 {
-    setup();
-    OPENVAR(); //get the score from the appvar
+    setup(); //setup the stuff for graphics.
+    OPENVAR(); //get the score from the appvar.
     level = score/100;
     ti_CloseAll();
-    if (level > 20){ //If the level is higher than 10, display the big dragon
-        drawgan();
-    }
-    else { //if the level is lower than 10, display the small dragon
-        draak();
-    }
+    draw_Dragon(); //determine which dragon to draw and draw it.
     lines(); //draw the rest of the screen
-    program_run();
-    UPDATEVAR(); //update the score appvar with the new score
+    program_run(); //run the program
+    UPDATEVAR(); //update the score appvar with the new score.
     gfx_End();
 }
+
