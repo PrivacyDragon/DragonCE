@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <graphx.h>
 #include <keypadc.h>
-#include <compression.h>
 #include <fileioc.h>
 #include "gfx/gfx.h"
 #define APPVAR "DRGNLVL"
-
 uint24_t score;
 uint24_t level;
+gfx_sprite_t *draga; //this is to make it easier to move the dragon, no matter what one it is.
 
 void setup(){
+    srandom(rtc_Time());
     gfx_Begin();
     gfx_SetDrawBuffer();
     gfx_SetTransparentColor(148);
@@ -67,7 +67,7 @@ void feed(){
     int x, y;
     score++;
     gfx_BlitScreen();
-    gfx_SetDrawScreen();
+    //the following two for loops move the goat to the dragon.
     for (x = 10; x < 50; x++){
         gfx_Sprite(goat, x,50);
         delay(100);
@@ -80,14 +80,51 @@ void feed(){
     gfx_SwapDraw();
     delay(300);
     gfx_BlitBuffer();
+    gfx_SetDrawScreen();
 }
 void care(){
+    /* ADD IN THE OIL STUFF.
+     * LOOK UP IF THAT WAS BEFORE OR AFTER THE SAND.
+     * FIND OUT IF THERE WAS ANYTHING ELSE NEEDED
+     */
+    uint24_t x, i, j;
+    uint8_t y;
+    score++;
+    gfx_FillScreen(224); //fill the screen with the background color.
+    gfx_SetColor(228); //set the color to a yellow to display pixels, being 'sand'
+    gfx_Sprite(draga, 100, 40); //draw the dragon again
+    for (j = 0; j < 240; j++){ //draw yellow pixels on the screen, going down.
+        for (i = 0; i < 100; i++){
+            x = randInt(0, 320);
+            y = randInt(0, 10)+j;
+            gfx_SetPixel(x, y);
+        }
+        for (i = 0; i < 50; i++){
+            x = randInt(10, 310);
+            y = randInt(10, 20)+j;
+            gfx_SetPixel(x, y);
+        }
+        for (i = 0; i < 50; i++){
+            x = randInt(10, 310);
+            y = randInt(20, 40)+j;
+            gfx_SetPixel(x, y);
+        }
+    }
+    delay(300); //wait for a moment.
+    //do something that wipes the pixels to the left.
+   /* for (i = 0; i < 320; i++){
+        gfx_ShiftLeft(1);
+        gfx_FillRectangle(319,0,320,240);
+        gfx_Sprite(draga, 100, 40);
+        delay(50);
+    }*/
+    gfx_BlitBuffer(); //get the normal screen back
+    gfx_SetDrawScreen();
 }
 void train(){
     int i, y;
     score++;
     gfx_BlitScreen();
-    gfx_SetDrawScreen();
     gfx_FillScreen(224);
     /*for (y = 40; y != 10; y--){
         gfx_TransparentSprite(dragon, 40, y);
@@ -102,17 +139,18 @@ void train(){
     gfx_SetTextScale(1, 1);
     for (i = 0; i < 5; i++){
         for (y = 10; y < 40; y++){
-            gfx_Sprite(dragon, 100, y);
+            gfx_Sprite_NoClip(draga, 100, y);
             delay(60);
         }
         for (y = 40; y != 10; y--){
-            gfx_Sprite(dragon, 100, y);
+            gfx_Sprite_NoClip(draga, 100, y);
             delay(60);
         }
     }
     delay(500);
     gfx_SwapDraw();
     gfx_BlitBuffer();
+    gfx_SetDrawScreen();
 }
 void lines() {
     int a;
@@ -132,15 +170,17 @@ void lines() {
     gfx_BlitBuffer();
 }
 void drawgan() {
-    gfx_TransparentSprite(dragan, 40, 40);
+    draga = dragan; //store the sprite in draga, so it's easier to use later.
+    gfx_TransparentSprite(draga, 100, 40);
     gfx_BlitBuffer();
 }
 void draak() {
-    gfx_TransparentSprite(dragon, 100, 40);
+    draga = dragon; //store the sprite in draga, so it's easier to use later.
+    gfx_TransparentSprite(draga, 100, 40);
     gfx_BlitBuffer();
 }
 void draw_Dragon(){
-        if (level > 20){ //If the level is higher than 10, display the big dragon
+        if (level > 10){ //If the level is higher than 10, display the big dragon
         drawgan();
     }
     else { //if the level is lower than 10, display the small dragon
@@ -148,6 +188,7 @@ void draw_Dragon(){
     }
 }
 void program_run(){
+    gfx_SetDrawScreen();
     do {
         kb_Scan();
         if (kb_Data[1] == kb_Yequ){
@@ -163,6 +204,12 @@ void program_run(){
         if (kb_Data[1] == kb_Trace){
             train();
         }
+        if (kb_Data[3] == kb_0){
+            //for testing purposes only
+            printf("%d",score);
+            delay(500);
+            gfx_BlitBuffer();
+        }
     } while (kb_Data[6] != kb_Clear);
 }
 void OPENVAR(){
@@ -171,22 +218,20 @@ void OPENVAR(){
     ti_CloseAll();
     if (!ti_Open(APPVAR, "r")){
         slot = ti_Open(APPVAR, "w");
-        score = 100;
+        score = 20;
         ti_Write(&score, sizeof(score), 1, slot);
         ti_CloseAll();
     }
     var = ti_Open(APPVAR, "r");
     ti_Read(&score, sizeof(score), 1, var); //DON'T say score = ti_Read(blabla) that will mess everything up...
     ti_CloseAll();
-    if (score < 100){ //if for some reason the score is below 100, which shouldn't happen, reset it to 100
+    if (score < 20){ //if for some reason the score is below 100, which shouldn't happen, reset it to 100
         printf("%d\n",score);
         delay(500);
-        score = 100;
+        score = 20;
         var = ti_Open(APPVAR, "w");
         ti_Write(&score, sizeof(score), 1, var);
         }
-    printf("%d",score);
-    delay(500);
     ti_CloseAll();
 }
 void UPDATEVAR(){
@@ -198,7 +243,7 @@ int main(void)
 {
     setup(); //setup the stuff for graphics.
     OPENVAR(); //get the score from the appvar.
-    level = score/100;
+    level = score/20;
     ti_CloseAll();
     draw_Dragon(); //determine which dragon to draw and draw it.
     lines(); //draw the rest of the screen
@@ -206,4 +251,3 @@ int main(void)
     UPDATEVAR(); //update the score appvar with the new score.
     gfx_End();
 }
-
