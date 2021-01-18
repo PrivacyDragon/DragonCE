@@ -14,7 +14,6 @@ void setup(){
     gfx_Begin();
     gfx_SetDrawBuffer();
     gfx_SetTransparentColor(148);
-    gfx_FillScreen(224);
 }
 void about(){
     void about2();
@@ -180,7 +179,8 @@ void draak() {
     gfx_BlitBuffer();
 }
 void draw_Dragon(){
-        if (level > 10){ //If the level is higher than 10, display the big dragon
+    gfx_FillScreen(224); //Fill the screen with a red background color.
+    if (level >= 10){ //If the level is higher than 10, display the big dragon
         drawgan();
     }
     else { //if the level is lower than 10, display the small dragon
@@ -210,6 +210,18 @@ void program_run(){
             delay(500);
             gfx_BlitBuffer();
         }
+        if (level != score/20){
+            //Make sure that the level is updated when you level up.
+            //You'll also see big "LEVEL UP!" when you level up.
+            //Also make sure that the good dragon is when you have gained a level.
+            gfx_FillScreen(224);
+            gfx_SetTextScale(3, 3);
+            gfx_PrintStringXY("LEVEL UP!", 160, 120);
+            gfx_SetTextScale(1, 1);
+            level = score/20;
+            lines();
+            draw_Dragon();
+        }
     } while (kb_Data[6] != kb_Clear);
 }
 void OPENVAR(){
@@ -225,7 +237,7 @@ void OPENVAR(){
     var = ti_Open(APPVAR, "r");
     ti_Read(&score, sizeof(score), 1, var); //DON'T say score = ti_Read(blabla) that will mess everything up...
     ti_CloseAll();
-    if (score < 20){ //if for some reason the score is below 100, which shouldn't happen, reset it to 100
+    if (score < 20){ //if for some reason the score is below 20, which shouldn't happen, reset it to 20
         printf("%d\n",score);
         delay(500);
         score = 20;
