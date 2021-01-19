@@ -123,6 +123,12 @@ void care(){
 void train(){
     int i, y;
     score++;
+    char* action[6] = {"FLYING +2",
+                       "DAMAGE -1",
+                       "HIDING +9",
+                       "FIRE +4",
+                       "ROARING +8",
+                       "FLUFFY -10"};
     gfx_BlitScreen();
     gfx_FillScreen(224);
     /*for (y = 40; y != 10; y--){
@@ -135,7 +141,6 @@ void train(){
     }*/
     gfx_SetTextScale(2, 2);
     gfx_PrintStringXY("TRAINING...", 150,220);
-    gfx_SetTextScale(1, 1);
     for (i = 0; i < 5; i++){
         for (y = 10; y < 40; y++){
             gfx_Sprite_NoClip(draga, 100, y);
@@ -145,7 +150,11 @@ void train(){
             gfx_Sprite_NoClip(draga, 100, y);
             delay(60);
         }
+        gfx_FillScreen(224);
+        gfx_PrintStringXY(action[randInt(0,5)], 0, 200);
+        gfx_PrintStringXY("TRAINING...", 150,220);
     }
+    gfx_SetTextScale(1, 1);
     delay(500);
     gfx_SwapDraw();
     gfx_BlitBuffer();
