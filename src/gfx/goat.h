@@ -5,11 +5,11 @@
 extern "C" {
 #endif
 
-#define goat_width 70
-#define goat_height 58
-#define goat_size 4062
+#define goat_width 69
+#define goat_height 52
+#define goat_size 3590
 #define goat ((gfx_sprite_t*)goat_data)
-extern unsigned char goat_data[4062];
+extern unsigned char goat_data[3590];
 
 #ifdef __cplusplus
 }
