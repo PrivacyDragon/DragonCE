@@ -19,7 +19,7 @@ void about(){
     void about2();
     score++;
     gfx_SetDrawScreen();
-    gfx_FillScreen(224);
+    gfx_FillScreen(132);
     gfx_PrintStringXY("DRAGONCE, a virtual dragon on your calculator!",1,1);
     gfx_PrintStringXY("I really want to thank:",1,26);
     gfx_PrintStringXY("-Patty van Delft,",1,46);
@@ -32,7 +32,7 @@ void about(){
     gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
     gfx_PrintStringXY("For drawing the dragons",10,181);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.2",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.4",200,230);
     gfx_PrintStringXY(">",5,230);
     do{ //wait untill clear is pressed
         kb_Scan();
@@ -46,14 +46,14 @@ void about(){
     gfx_BlitBuffer(); //get the screen back from the buffer, move the about screen in the buffer (though it isn't needed anymore)
 }
 void about2(){
-    gfx_FillScreen(224);
+    gfx_FillScreen(132);
     gfx_PrintStringXY("DRAGONCE, a virtual dragon on your calculator!",1,1);
     gfx_PrintStringXY("Patty van Delft's website:",1,26);
     gfx_PrintStringXY("https://pattyvandelft.com/",5,41);
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.2",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.4",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
         kb_Scan();
@@ -89,27 +89,51 @@ void care(){
     uint24_t x, i, j;
     uint8_t y;
     score++;
-    gfx_FillScreen(224); //fill the screen with the background color.
-    gfx_SetColor(228); //set the color to a yellow to display pixels, being 'sand'
+    gfx_FillScreen(132); //fill the screen with the background color.
+    gfx_SetColor(227); //set the color to a yellow to display pixels, being 'sand'
     gfx_Sprite(draga, 100, 40); //draw the dragon again
+	gfx_SetTextScale(2, 2);
+	gfx_PrintStringXY("Using sand...", 100, 0);
     for (j = 0; j < 240; j++){ //draw yellow pixels on the screen, going down.
-        for (i = 0; i < 100; i++){
+        for (i = 0; i < 90; i++){
             x = randInt(0, 320);
             y = randInt(0, 10)+j;
             gfx_SetPixel(x, y);
         }
-        for (i = 0; i < 50; i++){
+        for (i = 0; i < 46; i++){
             x = randInt(10, 310);
             y = randInt(10, 20)+j;
             gfx_SetPixel(x, y);
         }
-        for (i = 0; i < 50; i++){
+        for (i = 0; i < 46; i++){
             x = randInt(10, 310);
             y = randInt(20, 40)+j;
             gfx_SetPixel(x, y);
         }
     }
     delay(300); //wait for a moment.
+	gfx_SetColor(132);
+	gfx_FillRectangle(0,0,320,15);
+	gfx_SetColor(28);
+	gfx_PrintStringXY("Using Water...", 100, 0);
+	for (j = 20; j < 240; j++){ //draw blue pixels on the screen, going down.
+        for (i = 0; i < 90; i++){
+            x = randInt(0, 320);
+            y = randInt(0, 10)+j;
+            gfx_SetPixel(x, y);
+        }
+        for (i = 0; i < 46; i++){
+            x = randInt(10, 310);
+            y = randInt(10, 20)+j;
+            gfx_SetPixel(x, y);
+        }
+        for (i = 0; i < 46; i++){
+            x = randInt(10, 310);
+            y = randInt(20, 40)+j;
+            gfx_SetPixel(x, y);
+        }
+    }
+    delay(100);
     //do something that wipes the pixels to the left.
    /* for (i = 0; i < 320; i++){
         gfx_ShiftLeft(1);
@@ -117,8 +141,21 @@ void care(){
         gfx_Sprite(draga, 100, 40);
         delay(50);
     }*/
+    gfx_FillScreen(132);
+	gfx_Sprite(draga, 100, 40);
+	gfx_PrintStringXY("Done!", 100, 10);
+	gfx_SetColor(255);
+	for (i=0; i<50; i++){
+		x=randInt(120,220);
+		y=randInt(40,180);
+		gfx_SetPixel(x, y);
+		delay(50);
+	}
+	gfx_SetTextScale(1, 1);
+	delay(500);
     gfx_BlitBuffer(); //get the normal screen back
     gfx_SetDrawScreen();
+	
 }
 void train(){
     int i, y;
@@ -130,7 +167,7 @@ void train(){
                        "ROARING +8",
                        "FLUFFY -10"};
     gfx_BlitScreen();
-    gfx_FillScreen(224);
+    gfx_FillScreen(132);
     /*for (y = 40; y != 10; y--){
         gfx_TransparentSprite(dragon, 40, y);
         delay(80);
@@ -144,13 +181,13 @@ void train(){
     for (i = 0; i < 5; i++){
         for (y = 10; y < 40; y++){
             gfx_Sprite_NoClip(draga, 100, y);
-            delay(60);
+            delay(40);
         }
         for (y = 40; y != 10; y--){
             gfx_Sprite_NoClip(draga, 100, y);
-            delay(60);
+            delay(40);
         }
-        gfx_FillScreen(224);
+        gfx_FillScreen(132);
         gfx_PrintStringXY(action[randInt(0,5)], 0, 200);
         gfx_PrintStringXY("TRAINING...", 150,220);
     }
@@ -188,7 +225,7 @@ void draak() {
     gfx_BlitBuffer();
 }
 void draw_Dragon(){
-    gfx_FillScreen(224); //Fill the screen with a red background color.
+    gfx_FillScreen(132); //Fill the screen with a red background color.
     if (level >= 10){ //If the level is higher than 10, display the big dragon
         drawgan();
     }
@@ -223,7 +260,7 @@ void program_run(){
             //Make sure that the level is updated when you level up.
             //You'll also see big "LEVEL UP!" when you level up.
             //Also make sure that the good dragon is when you have gained a level.
-            gfx_FillScreen(224);
+            gfx_FillScreen(132);
             gfx_SetTextScale(3, 3);
             gfx_PrintStringXY("LEVEL UP!", 160, 120);
             gfx_SetTextScale(1, 1);
