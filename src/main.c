@@ -8,7 +8,6 @@
 uint24_t score;
 uint24_t level;
 gfx_sprite_t *draga; //this is to make it easier to move the dragon, no matter what one it is.
-
 void setup(){
     srandom(rtc_Time());
     gfx_Begin();
@@ -61,6 +60,46 @@ void about2(){
             about();
         }
     } while (kb_Data[6] != kb_Clear);
+}
+void fly(){
+	int x, y;
+	x = 10;y = 10;
+	gfx_BlitScreen();
+	gfx_FillScreen(132);
+	gfx_SetColor(132);
+	do{
+		gfx_FillRectangle(1,1,20,20);
+		gfx_SetTextXY(1,1);
+		gfx_PrintUInt(x, 2);
+		gfx_SetTextXY(1,10);
+		gfx_PrintUInt(y, 2);
+		gfx_ScaledSprite_NoClip(dragon_fly, x, y, 2, 2);
+		kb_Scan();
+		if (kb_Data[7] == kb_Left){
+			x--;
+		}
+		else if (kb_Data[7] == kb_Right){
+			x++;
+		}
+		else if (kb_Data[7] == kb_Down){
+			y++;
+		}
+		else if (kb_Data[7] == kb_Up){
+			y--;
+		}
+		if (kb_IsDown(kb_KeyAlpha)){ //If alpha is PRESSED the fire should come
+			gfx_ScaledSprite_NoClip(fire, x+40, y+30, 2, 2); //The location of the fire is based on the location of the dragon.
+			gfx_ScaledSprite_NoClip(fire, x+58, y+30, 2, 2);
+		}
+		else{ //if the alpha key is not pressed, a simple rectangle is drawn.
+			gfx_FillRectangle(x+40, y+30, 36, 70);
+		}
+	} while (!kb_IsDown(kb_KeyClear));
+	do{//wait untill clear is released
+        kb_Scan();
+    } while (kb_IsDown(kb_KeyClear));
+	gfx_BlitBuffer(); //get the normal screen back
+    gfx_SetDrawScreen();
 }
 void feed(){
     int x, y;
@@ -250,6 +289,9 @@ void program_run(){
         if (kb_Data[1] == kb_Trace){
             train();
         }
+        if (kb_Data[1] == kb_Graph){
+			fly();
+		}
         if (kb_Data[3] == kb_0){
             //for testing purposes only
             printf("%d",score);
