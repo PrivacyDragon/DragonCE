@@ -10,6 +10,8 @@ extern "C" {
 #include "goat.h"
 #include "dragan.h"
 #include "oil.h"
+#include "dragon_fly.h"
+#include "fire.h"
 
 #ifdef __cplusplus
 }
