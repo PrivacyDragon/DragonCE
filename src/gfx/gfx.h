@@ -12,6 +12,7 @@ extern "C" {
 #include "oil.h"
 #include "dragon_fly.h"
 #include "fire.h"
+#include "grass.h"
 
 #ifdef __cplusplus
 }
