@@ -62,11 +62,13 @@ void about2(){
     } while (kb_Data[6] != kb_Clear);
 }
 void fly(){
-	int x, y;
-	x = 10;y = 10;
+	int x, y, i;
+	x = 10;y = 10;i = 0;
+	score+=2;
 	gfx_BlitScreen();
 	gfx_FillScreen(132);
 	gfx_SetColor(132);
+	gfx_ScaledSprite_NoClip(grass, 1, 210, 2, 2);
 	do{
 		gfx_FillRectangle(1,1,20,20);
 		gfx_SetTextXY(1,1);
@@ -75,16 +77,31 @@ void fly(){
 		gfx_PrintUInt(y, 2);
 		gfx_ScaledSprite_NoClip(dragon_fly, x, y, 2, 2);
 		kb_Scan();
-		if (kb_Data[7] == kb_Left){
-			x--;
+		if (kb_Data[7] == kb_Left && x!=1){
+			if (x>2){
+				x--;
+			}
+			else{
+				i++;
+				gfx_FillRectangle(1,210,30,480);
+				gfx_ScaledSprite_NoClip(grass, 480+i, 210, 2, 2);
+			}
 		}
 		else if (kb_Data[7] == kb_Right){
-			x++;
+			if (x!=280){
+				x++;
+			}
+			else{
+				/*gfx_ShiftLeft(1);*/
+				i--;
+				gfx_FillRectangle(1,210,30,480);
+				gfx_ScaledSprite_NoClip(grass, 480+i, 210, 2, 2);
+			}
 		}
-		else if (kb_Data[7] == kb_Down){
+		else if (kb_Data[7] == kb_Down && y!=188){
 			y++;
 		}
-		else if (kb_Data[7] == kb_Up){
+		else if (kb_Data[7] == kb_Up && y!=1){
 			y--;
 		}
 		if (kb_IsDown(kb_KeyAlpha)){ //If alpha is PRESSED the fire should come
@@ -92,7 +109,7 @@ void fly(){
 			gfx_ScaledSprite_NoClip(fire, x+58, y+30, 2, 2);
 		}
 		else{ //if the alpha key is not pressed, a simple rectangle is drawn.
-			gfx_FillRectangle(x+40, y+30, 36, 70);
+			gfx_FillRectangle(x+40, y+30, 50, 70);
 		}
 	} while (!kb_IsDown(kb_KeyClear));
 	do{//wait untill clear is released
