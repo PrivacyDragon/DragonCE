@@ -31,7 +31,7 @@ void about(){
     gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
     gfx_PrintStringXY("For drawing the dragons",10,181);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.4",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.6",200,230);
     gfx_PrintStringXY(">",5,230);
     do{ //wait untill clear is pressed
         kb_Scan();
@@ -52,7 +52,7 @@ void about2(){
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.4",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.6",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
         kb_Scan();
@@ -138,10 +138,6 @@ void feed(){
     gfx_SetDrawScreen();
 }
 void care(){
-    /* ADD IN THE OIL STUFF.
-     * LOOK UP IF THAT WAS BEFORE OR AFTER THE SAND.
-     * FIND OUT IF THERE WAS ANYTHING ELSE NEEDED
-     */
     uint24_t x, i, j;
     uint8_t y;
     score++;
@@ -189,7 +185,12 @@ void care(){
             gfx_SetPixel(x, y);
         }
     }
-    delay(100);
+    delay(300);
+	gfx_FillScreen(132);
+	gfx_Sprite(draga, 100, 40);
+	gfx_PrintStringXY("Using Oil...", 100, 0);
+	gfx_RotatedSprite_NoClip(oil, 240, 10, 45);
+	delay(1500);
     //do something that wipes the pixels to the left.
    /* for (i = 0; i < 320; i++){
         gfx_ShiftLeft(1);
@@ -268,6 +269,7 @@ void lines() {
     gfx_PrintStringXY("CARE",77, 223);
     gfx_PrintStringXY("ABOUT",141,223);
     gfx_PrintStringXY("TRAIN",205,223);
+	gfx_PrintStringXY("FLY",276,223);
     gfx_BlitBuffer();
 }
 void drawgan() {
