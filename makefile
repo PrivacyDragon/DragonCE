@@ -4,7 +4,7 @@
 
 NAME ?= DRAGON
 ICON ?= icon.png
-DESCRIPTION ?= ""
+DESCRIPTION ?= "A virtual dragon -- (C)Privacy_Dragon"
 COMPRESSED ?= YES
 ARCHIVED ?= YES
 
