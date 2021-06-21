@@ -8,6 +8,11 @@
 uint24_t score;
 uint24_t level;
 gfx_sprite_t *draga; //this is to make it easier to move the dragon, no matter what one it is.
+uint8_t time[3] = {
+		0,
+		0,
+		0
+	    };
 void setup(){
     srandom(rtc_Time());
     gfx_Begin();
@@ -18,30 +23,36 @@ void about(){
     void about2();
     score++;
     gfx_SetDrawScreen();
-    gfx_FillScreen(132);
-    gfx_PrintStringXY("DRAGONCE, a virtual dragon on your calculator!",1,1);
-    gfx_PrintStringXY("I really want to thank:",1,26);
-    gfx_PrintStringXY("-Patty van Delft,",1,46);
-    gfx_PrintStringXY("The dragon is based on Dragan Duma,",10,61);
-    gfx_PrintStringXY("Which is a incredible serie Patty wrote",10,76);
-    gfx_PrintStringXY("-Celtica Publishing,",1,96);
-    gfx_PrintStringXY("Who published Dragan Duma",10,111);
-    gfx_PrintStringXY("-TimmyTurner51 and others from Cemetech,",1,131);
-    gfx_PrintStringXY("Who helped me with creating this",10,146);
-    gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
-    gfx_PrintStringXY("For drawing the dragons",10,181);
-    gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.6",200,230);
-    gfx_PrintStringXY(">",5,230);
-    do{ //wait untill clear is pressed
+    do{ 
+        gfx_FillScreen(132);
+    	gfx_PrintStringXY("DRAGONCE, a virtual dragon on your calculator!",1,1);
+    	gfx_PrintStringXY("I really want to thank:",1,26);
+    	gfx_PrintStringXY("-Patty van Delft,",1,46);
+    	gfx_PrintStringXY("The dragon is based on Dragan Duma,",10,61);
+    	gfx_PrintStringXY("Which is a incredible serie Patty wrote",10,76);
+    	gfx_PrintStringXY("-Celtica Publishing,",1,96);
+    	gfx_PrintStringXY("Who published Dragan Duma",10,111);
+    	gfx_PrintStringXY("-TimmyTurner51 and others from Cemetech,",1,131);
+    	gfx_PrintStringXY("Who helped me with creating this",10,146);
+    	gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
+    	gfx_PrintStringXY("For drawing the dragons",10,181);
+    	gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
+    	gfx_PrintStringXY("DEV_ALPHA v0.0.7",200,230);
+    	gfx_PrintStringXY(">",5,230);
+	delay(150);
+    	do{ //Detect keypresses. Right goes to about2, clear exits the loop, so you can exit the about screen
+    	    kb_Scan();
+    	    if (kb_Data[7] == kb_Right){
+    	        about2();
+            }
+	    if (kb_Data[6] == kb_Clear || kb_Data[7] == kb_Left){ //If kb_Left was pressed, it means the person did go to about2 and back. that means the loop for keypresses has to be quit, so the about text can be drawn again.
+		break;
+	    }
+	} while (kb_Data[7] != kb_Right);
+      } while (!kb_IsDown(kb_KeyClear));
+      do{//wait untill clear is released
         kb_Scan();
-        if (kb_Data[7] == kb_Right){
-            about2();
-        }
-    } while (!kb_IsDown(kb_KeyClear));
-    do{//wait untill clear is released
-        kb_Scan();
-    } while (kb_IsDown(kb_KeyClear));
+      } while (kb_IsDown(kb_KeyClear));
     gfx_BlitBuffer(); //get the screen back from the buffer, move the about screen in the buffer (though it isn't needed anymore)
 }
 void about2(){
@@ -52,14 +63,11 @@ void about2(){
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.6",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.7",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
-        kb_Scan();
-        if (kb_Data[7] == kb_Left){
-            about();
-        }
-    } while (kb_Data[6] != kb_Clear);
+      kb_Scan();
+    } while (kb_Data[7] != kb_Left && kb_Data[6] != kb_Clear);
 }
 void fly(){
 	int x, y, i;
@@ -70,6 +78,12 @@ void fly(){
 	gfx_SetColor(132);
 	gfx_ScaledSprite_NoClip(grass, 1, 210, 2, 2);
 	do{
+		if (level<10){
+			gfx_PrintStringXY("YOU CAN'T FLY ON A DRAGON TILL IT'S GROWN UP!!!", 1,20);
+			delay(500);
+			score-=2;
+			break;
+		}
 		gfx_FillRectangle(1,1,20,20);
 		gfx_SetTextXY(1,1);
 		gfx_PrintUInt(x, 2);
@@ -119,9 +133,33 @@ void fly(){
     gfx_SetDrawScreen();
 }
 void feed(){
+    void GetLastTime(), SetLastTime();
     int x, y;
+    uint8_t second_now, minute_now, hour_now;
+    //Get the time the dragon was last fed out of an appvar. Then get the current time.
+    GetLastTime();
+    gfx_SetTextXY(1,20);
+    gfx_PrintUInt(time[0], sizeof(time[0]));
+    gfx_PrintString(":");
+    gfx_PrintUInt(time[1], sizeof(time[1]));
+    gfx_PrintString(".");
+    gfx_PrintUInt(time[2], sizeof(time[2]));
+    delay(500);
+    boot_GetTime(&second_now, &minute_now, &hour_now);
+    time[0] = hour_now;
+    time[1] = minute_now;
+    time[2] = second_now;
+    SetLastTime();
     score++;
     gfx_BlitScreen();
+    gfx_SetTextXY(21,50);
+    gfx_PrintUInt(time[0], sizeof(time[0]));
+    gfx_PrintString(":");
+    gfx_PrintUInt(time[1], sizeof(time[1]));
+    gfx_PrintString(".");
+    gfx_PrintUInt(time[2], sizeof(time[2]));
+
+    delay(500);
     //the following two for loops move the goat to the dragon.
     for (x = 10; x < 50; x++){
         gfx_Sprite(goat, x,50);
@@ -138,6 +176,10 @@ void feed(){
     gfx_SetDrawScreen();
 }
 void care(){
+    /* ADD IN THE OIL STUFF.
+     * LOOK UP IF THAT WAS BEFORE OR AFTER THE SAND.
+     * FIND OUT IF THERE WAS ANYTHING ELSE NEEDED
+     */
     uint24_t x, i, j;
     uint8_t y;
     score++;
@@ -283,7 +325,7 @@ void draak() {
     gfx_BlitBuffer();
 }
 void draw_Dragon(){
-    gfx_FillScreen(132); //Fill the screen with a red background color.
+    gfx_FillScreen(132); //Fill the screen with a green background color.
     if (level >= 10){ //If the level is higher than 10, display the big dragon
         drawgan();
     }
@@ -309,8 +351,8 @@ void program_run(){
             train();
         }
         if (kb_Data[1] == kb_Graph){
-			fly();
-		}
+	    fly();
+	}
         if (kb_Data[3] == kb_0){
             //for testing purposes only
             printf("%d",score);
@@ -323,13 +365,34 @@ void program_run(){
             //Also make sure that the good dragon is when you have gained a level.
             gfx_FillScreen(132);
             gfx_SetTextScale(3, 3);
-            gfx_PrintStringXY("LEVEL UP!", 160, 120);
+            gfx_PrintStringXY("LEVEL UP!", 25, 120);
             gfx_SetTextScale(1, 1);
+	    delay(1000);
+	    gfx_FillScreen(132);
             level = score/20;
-            lines();
+	    gfx_SetDrawBuffer();
             draw_Dragon();
+	    lines();
+	    gfx_SetDrawScreen();
         }
     } while (kb_Data[6] != kb_Clear);
+}
+void SetLastTime(){
+    ti_var_t var = ti_Open("FEEDTIME", "w");
+    ti_Write(&time, sizeof(time), 1, var);
+    ti_CloseAll();
+}
+void GetLastTime(){
+    ti_var_t var, slot;
+    ti_CloseAll();
+    if (!ti_Open("FEEDTIME", "r")){
+	slot = ti_Open("FEEDTIME", "w");
+	ti_Write(&time, sizeof(time), 1, slot);
+	ti_CloseAll();
+    }
+    var = ti_Open("FEEDTIME", "r");
+    ti_Read(&time, sizeof(time), 1, slot);
+    ti_CloseAll();
 }
 void OPENVAR(){
     ti_var_t var;
