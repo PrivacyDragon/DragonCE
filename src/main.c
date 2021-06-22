@@ -8,7 +8,8 @@
 uint24_t score;
 uint24_t level;
 gfx_sprite_t *draga; //this is to make it easier to move the dragon, no matter what one it is.
-uint8_t time[3] = {
+uint8_t time[4] = {
+		0,
 		0,
 		0,
 		0
@@ -18,6 +19,7 @@ void setup(){
     gfx_Begin();
     gfx_SetDrawBuffer();
     gfx_SetTransparentColor(148);
+    void GetLastTime();
 }
 void about(){
     void about2();
@@ -37,7 +39,7 @@ void about(){
     	gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
     	gfx_PrintStringXY("For drawing the dragons",10,181);
     	gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    	gfx_PrintStringXY("DEV_ALPHA v0.0.7",200,230);
+    	gfx_PrintStringXY("DEV_ALPHA v0.0.8",200,230);
     	gfx_PrintStringXY(">",5,230);
 	delay(150);
     	do{ //Detect keypresses. Right goes to about2, clear exits the loop, so you can exit the about screen
@@ -63,11 +65,13 @@ void about2(){
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.7",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.8",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
       kb_Scan();
     } while (kb_Data[7] != kb_Left && kb_Data[6] != kb_Clear);
+}
+void say(char string){
 }
 void fly(){
 	int x, y, i;
@@ -135,7 +139,8 @@ void fly(){
 void feed(){
     void GetLastTime(), SetLastTime();
     int x, y;
-    uint8_t second_now, minute_now, hour_now;
+    uint8_t second_now, minute_now, hour_now, day_now, month_now;
+    uint16_t year_now;
     //Get the time the dragon was last fed out of an appvar. Then get the current time.
     GetLastTime();
     gfx_SetTextXY(1,20);
@@ -146,35 +151,47 @@ void feed(){
     gfx_PrintUInt(time[2], sizeof(time[2]));
     delay(500);
     boot_GetTime(&second_now, &minute_now, &hour_now);
+    boot_GetDate(&day_now, &month_now, &year_now);
+    int hours_gone = hour_now - time[0];
+    int days_gone = day_now - time[3];
     time[0] = hour_now;
     time[1] = minute_now;
     time[2] = second_now;
+    time[3] = day_now;
     SetLastTime();
     score++;
     gfx_BlitScreen();
     gfx_SetTextXY(21,50);
-    gfx_PrintUInt(time[0], sizeof(time[0]));
+    gfx_PrintUInt(hours_gone, sizeof(hours_gone));
     gfx_PrintString(":");
-    gfx_PrintUInt(time[1], sizeof(time[1]));
+    gfx_PrintUInt(days_gone, sizeof(days_gone));
     gfx_PrintString(".");
     gfx_PrintUInt(time[2], sizeof(time[2]));
-
     delay(500);
-    //the following two for loops move the goat to the dragon.
-    for (x = 10; x < 50; x++){
-        gfx_Sprite(goat, x,50);
-        delay(100);
-    }
-    for (y = 50; y < 70; y++){
-        gfx_Sprite(goat, 50, y);
-        delay(100);
-    }
-    gfx_TransparentSprite(goat, 50, 70);
-    gfx_SwapDraw();
-    delay(300);
-    gfx_BlitBuffer();
-    gfx_SetDrawScreen();
+    if ((level<10 && ((days_gone == 0 && hours_gone > 4)||(days_gone>1))) || (level>=10 && days_gone >= 1)){
+
+
+
+   	 //the following two for loops move the goat to the dragon.
+   	 for (x = 10; x < 50; x++){
+   	     gfx_Sprite(goat, x,50);
+   	     delay(100);
+   	 }
+   	 for (y = 50; y < 70; y++){
+   	     gfx_Sprite(goat, 50, y);
+   	     delay(100);
+   	 }
+   	 gfx_TransparentSprite(goat, 50, 70);
+   	 gfx_SwapDraw();
+   	 delay(300);
+   	 gfx_BlitBuffer();
+   	 gfx_SetDrawScreen();
+   }
+   else {
+     say("I don't want to get as fat as you!");
+   }
 }
+	
 void care(){
     /* ADD IN THE OIL STUFF.
      * LOOK UP IF THAT WAS BEFORE OR AFTER THE SAND.
