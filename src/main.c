@@ -8,6 +8,21 @@
 uint24_t score;
 uint24_t level;
 gfx_sprite_t *draga; //this is to make it easier to move the dragon, no matter what one it is.
+char* quotes[4] = {
+                  "My eggs will NOT be stolen! go away!",
+                  "Of course I can fly. I'm a dragon!",
+                  "You humans have a strange kind of logic",
+                  "You love someone or you don't, it's as easy as that"
+            };
+char* HUNGER[7] = {
+		"FEED ME!!!",
+		"I'm hungry!!!",
+		"Give me food, or you will be my dinner",
+		"Hmmmm, maybe humans are nice food too...",
+		"I cannot even remember when I was last fed",
+		"I really want to tear some goats into pieces",
+		"Ah, there you are! I'm hungry!"
+		};
 uint8_t time[4] = {
 		0,
 		0,
@@ -39,7 +54,7 @@ void about(){
     	gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
     	gfx_PrintStringXY("For drawing the dragons",10,181);
     	gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    	gfx_PrintStringXY("DEV_ALPHA v0.0.8",200,230);
+    	gfx_PrintStringXY("DEV_ALPHA v0.0.10",200,230);
     	gfx_PrintStringXY(">",5,230);
 	delay(150);
     	do{ //Detect keypresses. Right goes to about2, clear exits the loop, so you can exit the about screen
@@ -65,14 +80,36 @@ void about2(){
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.8",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.10",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
       kb_Scan();
     } while (kb_Data[7] != kb_Left && kb_Data[6] != kb_Clear);
 }
-void say(char string){
+void say(char *string){
+	//Before saying stuff, the area where the text will come, has to be cleared. Otherwise, there will be complete mess.
+        gfx_SetColor(132);
+        gfx_FillRectangle(1, 20, 480, 25);
+	gfx_SetColor(0);
+	gfx_PrintStringXY(string, 1, 20);
+	gfx_Line(60, 30, 150, 40);
 }
+void ManipulateBrainToSaySomething(){
+	//The dragon gets hungry if they haven't been fed for more than a day. If the dragon is hungry, it tells that. Otherwise, it says one of the quotes.
+	void GetLastFeedTime();
+	uint8_t day_now, month_now;
+	uint16_t year_now;
+	boot_GetDate(&day_now, &month_now, &year_now);
+	GetLastFeedTime();
+    	int days_gone = day_now - time[3];
+	if (days_gone >= 1){
+		int quoteNr = randInt(0, sizeof HUNGER);
+		say(HUNGER[quoteNr]);
+	} else {
+		int quoteNr = randInt(0, sizeof quotes);
+		say(quotes[quoteNr]);
+	}
+}	
 void fly(){
 	int x, y, i;
 	x = 10;y = 10;i = 0;
@@ -137,13 +174,13 @@ void fly(){
     gfx_SetDrawScreen();
 }
 void feed(){
-    void GetLastTime(), SetLastTime();
+    void GetLastFeedTime(), SetLastFeedTime();
     int x, y;
     uint8_t second_now, minute_now, hour_now, day_now, month_now;
     uint16_t year_now;
     //Get the time the dragon was last fed out of an appvar. Then get the current time.
-    GetLastTime();
-    gfx_SetTextXY(1,20);
+    GetLastFeedTime();
+    gfx_SetTextXY(1,30);
     gfx_PrintUInt(time[0], sizeof(time[0]));
     gfx_PrintString(":");
     gfx_PrintUInt(time[1], sizeof(time[1]));
@@ -154,12 +191,6 @@ void feed(){
     boot_GetDate(&day_now, &month_now, &year_now);
     int hours_gone = hour_now - time[0];
     int days_gone = day_now - time[3];
-    time[0] = hour_now;
-    time[1] = minute_now;
-    time[2] = second_now;
-    time[3] = day_now;
-    SetLastTime();
-    score++;
     gfx_BlitScreen();
     gfx_SetTextXY(21,50);
     gfx_PrintUInt(hours_gone, sizeof(hours_gone));
@@ -168,10 +199,13 @@ void feed(){
     gfx_PrintString(".");
     gfx_PrintUInt(time[2], sizeof(time[2]));
     delay(500);
-    if ((level<10 && ((days_gone == 0 && hours_gone > 4)||(days_gone>1))) || (level>=10 && days_gone >= 1)){
-
-
-
+    if ((level < 10 && ((days_gone == 0 && hours_gone > 4)||(days_gone >= 1))) || (level >= 10 && days_gone >= 1)){
+	 time[0] = hour_now;
+     time[1] = minute_now;
+     time[2] = second_now;
+     time[3] = day_now;
+     SetLastFeedTime();
+     score++;
    	 //the following two for loops move the goat to the dragon.
    	 for (x = 10; x < 50; x++){
    	     gfx_Sprite(goat, x,50);
@@ -186,10 +220,11 @@ void feed(){
    	 delay(300);
    	 gfx_BlitBuffer();
    	 gfx_SetDrawScreen();
+	 ManipulateBrainToSaySomething();
    }
    else {
      say("I don't want to get as fat as you!");
-   }
+	}
 }
 	
 void care(){
@@ -352,23 +387,27 @@ void draw_Dragon(){
 }
 void program_run(){
     gfx_SetDrawScreen();
+    ManipulateBrainToSaySomething();
     do {
         kb_Scan();
         if (kb_Data[1] == kb_Yequ){
             feed();
         }
-        if (kb_Data[1] == kb_Window){
+        else if (kb_Data[1] == kb_Window){
             care();
         }
-        if (kb_Data[1] == kb_Zoom){
+        else if (kb_Data[1] == kb_Zoom){
             gfx_BlitScreen(); //move the screen to the buffer.
             about();
         }
-        if (kb_Data[1] == kb_Trace){
+        else if (kb_Data[1] == kb_Trace){
             train();
         }
-        if (kb_Data[1] == kb_Graph){
+        else if (kb_Data[1] == kb_Graph){
 	    fly();
+	}
+	if (kb_Data[1] == kb_Window || kb_Data[1] == kb_Zoom || kb_Data[1] == kb_Trace || kb_Data[1] == kb_Graph){ //The dragon should always say something. Though for after feeding, it is done within the feed() function, because of stuff. Because otherwise, you won't see it if the dragon has already had enough food.
+		ManipulateBrainToSaySomething();
 	}
         if (kb_Data[3] == kb_0){
             //for testing purposes only
@@ -394,12 +433,12 @@ void program_run(){
         }
     } while (kb_Data[6] != kb_Clear);
 }
-void SetLastTime(){
+void SetLastFeedTime(){
     ti_var_t var = ti_Open("FEEDTIME", "w");
     ti_Write(&time, sizeof(time), 1, var);
     ti_CloseAll();
 }
-void GetLastTime(){
+void GetLastFeedTime(){
     ti_var_t var, slot;
     ti_CloseAll();
     if (!ti_Open("FEEDTIME", "r")){
