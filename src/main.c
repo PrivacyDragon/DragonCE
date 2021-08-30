@@ -54,7 +54,7 @@ void about(){
     	gfx_PrintStringXY("-Again: Patty van Delft,",1,166);
     	gfx_PrintStringXY("For drawing the dragons",10,181);
     	gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    	gfx_PrintStringXY("DEV_ALPHA v0.0.10",200,230);
+    	gfx_PrintStringXY("DEV_ALPHA v0.0.11",200,230);
     	gfx_PrintStringXY(">",5,230);
 	delay(150);
     	do{ //Detect keypresses. Right goes to about2, clear exits the loop, so you can exit the about screen
@@ -80,7 +80,7 @@ void about2(){
     gfx_PrintStringXY("Celtica Publishing website:",1,61);
     gfx_PrintStringXY("https://www.celtica-publishing.nl/",5,76);
     gfx_PrintStringXY("This program was made by: Privacy_Dragon",1,210);
-    gfx_PrintStringXY("DEV_ALPHA v0.0.10",200,230);
+    gfx_PrintStringXY("DEV_ALPHA v0.0.11",200,230);
     gfx_PrintStringXY("<",5,230);
     do{
       kb_Scan();
@@ -102,11 +102,12 @@ void ManipulateBrainToSaySomething(){
 	boot_GetDate(&day_now, &month_now, &year_now);
 	GetLastFeedTime();
     	int days_gone = day_now - time[3];
-	if (days_gone >= 1){
-		int quoteNr = randInt(0, sizeof HUNGER);
+	//printf("%d",days_gone);
+	if (days_gone > 1){
+		int quoteNr = randInt(0, 6);
 		say(HUNGER[quoteNr]);
 	} else {
-		int quoteNr = randInt(0, sizeof quotes);
+		int quoteNr = randInt(0, 3);
 		say(quotes[quoteNr]);
 	}
 }	
@@ -447,7 +448,7 @@ void GetLastFeedTime(){
 	ti_CloseAll();
     }
     var = ti_Open("FEEDTIME", "r");
-    ti_Read(&time, sizeof(time), 1, slot);
+    ti_Read(&time, sizeof(time), 1, var);
     ti_CloseAll();
 }
 void OPENVAR(){
